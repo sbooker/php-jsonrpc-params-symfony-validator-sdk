@@ -6,10 +6,10 @@ use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
 use Symfony\Component\Validator\Constraints\Collection;
 use Symfony\Component\Validator\ConstraintViolationInterface;
+use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Yoanm\JsonRpcParamsSymfonyValidator\Domain\MethodWithValidatedParamsInterface;
 use Yoanm\JsonRpcParamsSymfonyValidator\Infra\JsonRpcParamsValidator;
-use Yoanm\JsonRpcServer\Domain\Event\Action\ValidateParamsEvent;
 use Yoanm\JsonRpcServer\Domain\JsonRpcMethodInterface;
 use Yoanm\JsonRpcServer\Domain\Model\JsonRpcRequest;
 
@@ -71,7 +71,7 @@ class JsonRpcParamsValidatorTest extends TestCase
         ;
 
         $this->sfValidator->validate($paramList, $paramConstraint->reveal())
-            ->willReturn([])
+            ->willReturn(new ConstraintViolationList())
             ->shouldBeCalled()
         ;
 
@@ -96,7 +96,11 @@ class JsonRpcParamsValidatorTest extends TestCase
         $violation2 = $this->prophesize(ConstraintViolationInterface::class);
         /** @var ConstraintViolationInterface|ObjectProphecy $violation3 */
         $violation3 = $this->prophesize(ConstraintViolationInterface::class);
-        $sfViolationList = [$violation1->reveal(), $violation2->reveal(), $violation3->reveal()];
+        $sfViolationList = new ConstraintViolationList([
+            $violation1->reveal(),
+            $violation2->reveal(),
+            $violation3->reveal()
+        ]);
         $expectedNormalizedErrorList = [
             [
                 'path' => 'path1',

@@ -30,6 +30,7 @@ class JsonRpcParamsValidator implements JsonRpcMethodParamsValidatorInterface
         if (!$method instanceof MethodWithValidatedParamsInterface) {
             return $violationList;
         }
+
         $sfViolationList = $this->validator->validate(
             $jsonRpcRequest->getParamList(),
             $method->getParamsConstraint()
